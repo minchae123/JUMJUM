@@ -15,6 +15,8 @@ public class Player : MonoBehaviour
     [SerializeField] private PlayerMode player;
 
     [SerializeField] private float speed;
+    private float currentPosX = 0;
+    private float dir = 1   ; // 방향
     [SerializeField] private float jumpPower;
 
     private Rigidbody2D rigid;
@@ -35,11 +37,13 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        Move(Vector2.right); // 시작할 때 오른쪽으로 이동
+
     }
 
     private void Update()
     {
+        Move();
+
         if (Input.GetKeyDown(KeyCode.W) && player == PlayerMode.LEFT)
         {
             LeftJump();
@@ -64,9 +68,10 @@ public class Player : MonoBehaviour
         // 오른쪽 플레이어의 점프 로직을 여기에 추가
     }
 
-    private void Move(Vector2 direction)
+    private void Move()
     {
-        rigid.velocity = direction * speed; // 속도를 설정
+        currentPosX += Time.deltaTime * dir * speed;
+        transform.position = new Vector2(currentPosX, transform.position.y);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -79,7 +84,6 @@ public class Player : MonoBehaviour
 
     private void Reverse()
     {
-        float x = Mathf.Sign(rigid.velocity.x) == 0 ? 1 : -Mathf.Sign(rigid.velocity.x);
-        Move(Vector2.right * x); // 방향을 반전하여 속도를 설정
+        dir *= -1;
     }
 }

@@ -515,7 +515,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: 1
-  speed: 10
+  speed: 15
   jumpPower: 0
   wallLayer:
     serializedVersion: 2
