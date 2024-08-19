@@ -69,10 +69,6 @@ public class Player : MonoBehaviour
         rigid.velocity = direction * speed; // 속도를 설정
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Wall"))
@@ -83,7 +79,6 @@ public class Player : MonoBehaviour
 
     private void Reverse()
     {
-        // 현재 속도가 0인 경우에는 기본 속도로 설정
         float x = Mathf.Sign(rigid.velocity.x) == 0 ? 1 : -Mathf.Sign(rigid.velocity.x);
         Move(Vector2.right * x); // 방향을 반전하여 속도를 설정
     }
