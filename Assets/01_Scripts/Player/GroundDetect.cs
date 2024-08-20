@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class GroundDetect : MonoBehaviour
 {
-    private bool isGround = false;
-    public bool IsGround => isGround;
+    [SerializeField] private LayerMask groundLayer;
+    private BoxCollider2D collider;
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void Awake()
     {
-        isGround = true;
+        collider = GetComponent<BoxCollider2D>();
     }
-    private void OnCollisionExit2D(Collision2D collision)
+
+    public bool IsGround()
     {
-        isGround = false;
+        float value =0.5f;
+        RaycastHit2D hit = Physics2D.BoxCast(collider.bounds.center, collider.bounds.size, 0f, Vector2.down, value, groundLayer);
+
+        return hit.collider != null;
     }
 }

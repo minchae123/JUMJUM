@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 79497091}
   - component: {fileID: 79497093}
   - component: {fileID: 79497092}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Wall (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -516,10 +516,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: 1
   speed: 15
-  jumpPower: 0
+  jumpPower: 15
   wallLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
 --- !u!50 &916040407
 Rigidbody2D:
   serializedVersion: 4
@@ -535,7 +535,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 5
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -846,6 +846,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e528129abc8d460419fcbfc21c944645, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!1 &2066759753
 GameObject:
   m_ObjectHideFlags: 0

@@ -21,7 +21,8 @@ public class Player : MonoBehaviour
 
     private Rigidbody2D rigid;
     private GroundDetect checkGround;
-    public bool IsGround => checkGround.IsGround;
+
+    private bool canJump = true;
 
     [Header("왼쪽 플레이어")]
     private int currentJumpCnt = 0;
@@ -56,10 +57,20 @@ public class Player : MonoBehaviour
 
     public void LeftJump()
     {
-        if (currentJumpCnt < 2) // 더블 점프 지원
+        if (checkGround.IsGround())
         {
-            rigid.velocity = new Vector2(rigid.velocity.x, jumpPower);
-            ++currentJumpCnt;
+            currentJumpCnt = 0;
+            canJump = true;
+        }
+
+        if (currentJumpCnt < 2 && canJump) // 더블 점프 지원
+        {
+            if (++currentJumpCnt >= 2)
+            {
+                canJump = false;
+            }
+            print(currentJumpCnt);
+            rigid.AddForce(Vector3.up * jumpPower, ForceMode2D.Impulse);
         }
     }
 
