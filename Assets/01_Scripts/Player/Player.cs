@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum PlayerMode
+public enum EPlayerMode
 {
     NONE = 0,
     LEFT = 1,
@@ -12,28 +12,43 @@ public enum PlayerMode
 public class Player : MonoBehaviour
 {
     [Header("공통변수")]
-    [SerializeField] private PlayerMode player;
+    [SerializeField] private EPlayerMode player;
 
     [SerializeField] private float speed;
-    private float currentPosX = 0;
-    private float dir = 1   ; // 방향
     [SerializeField] private float jumpPower;
+
+    private float currentPosX = 0;
+    private int dir = 1   ; // 방향
 
     private Rigidbody2D rigid;
     private GroundDetect checkGround;
 
-    private bool canJump = true;
+    private int currentJumpCnt = 0;
+
+    // ======================================
 
     [Header("왼쪽 플레이어")]
-    private int currentJumpCnt = 0;
+    private bool canJump = true;
+
+    // ======================================
 
     [Header("오른쪽 플레이어")]
     [SerializeField] private LayerMask wallLayer;
+
+    private Collider2D playerCol;
+    private bool canMove = true;
+
+    // ======================================
 
     private void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
         checkGround = GetComponentInChildren<GroundDetect>();
+
+        playerCol = GetComponent<Collider2D>();
+
+        canMove = true;
+        currentPosX = transform.localPosition.x;
     }
 
     private void Start()
@@ -43,15 +58,37 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        Move();
+        if (canMove)
+        {
+            Move();
+        }
 
-        if (Input.GetKeyDown(KeyCode.W) && player == PlayerMode.LEFT)
+        if (Input.GetKeyDown(KeyCode.W) && player == EPlayerMode.LEFT)
         {
             LeftJump();
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow) && player == PlayerMode.RIGHT)
+        else if (Input.GetKeyDown(KeyCode.UpArrow) && player == EPlayerMode.RIGHT)
         {
-            RightJump();
+            if (checkGround.IsGround())
+            {
+                currentJumpCnt = 0;
+            }
+
+            if (currentJumpCnt <= 0)
+            {
+                print("처음점프");
+                canMove = false;
+                RightJump();
+            }
+            else
+            {
+                print("두번");
+                if (IsWall())
+                {
+                    print("벽점프");
+                    RightJump();
+                }
+            }
         }
     }
 
@@ -69,14 +106,22 @@ public class Player : MonoBehaviour
             {
                 canJump = false;
             }
-            print(currentJumpCnt);
-            rigid.AddForce(Vector3.up * jumpPower, ForceMode2D.Impulse);
+
+            rigid.velocity = Vector2.zero;
+            rigid.velocity = new Vector2(.5f * jumpPower, 1.2f * jumpPower);
         }
     }
 
     public void RightJump()
     {
-        // 오른쪽 플레이어의 점프 로직을 여기에 추가
+        rigid.velocity = Vector2.zero;
+        rigid.velocity = new Vector2(-dir * jumpPower, 1.1f * jumpPower);
+        ++currentJumpCnt;
+    }
+
+    private bool IsWall()
+    {
+        return Physics2D.BoxCast(transform.position, playerCol.bounds.size, 0f, Vector2.left * dir, 0.5f, wallLayer);
     }
 
     private void Move()
