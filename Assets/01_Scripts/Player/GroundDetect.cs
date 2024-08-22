@@ -1,15 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
+[System.Flags]
+public enum ECollisionFlags
+{
+    None = 0,
+    Ground = 1,
+    Wall = 1 << 1
+}
 
 public class GroundDetect : MonoBehaviour
 {
     private Player player;
 
-    [SerializeField] private LayerMask groundLayer;
-    
+    [SerializeField] private LayerMask collisionLayer;
     private Collider2D groundCol;
-    private float raycastValue = 0.5f;
 
     private void Awake()
     {
@@ -17,9 +24,23 @@ public class GroundDetect : MonoBehaviour
         player = GetComponentInParent<Player>();
     }
 
-    public bool IsGround()
+    public ECollisionFlags GetCollisionState()
     {
-        RaycastHit2D hit = Physics2D.BoxCast(groundCol.bounds.center, groundCol.bounds.size, 0f, Vector2.down, raycastValue, groundLayer);
-        return hit.collider != null;
+        ECollisionFlags flags = ECollisionFlags.None;
+
+        Collider2D[] collisions = Physics2D.OverlapBoxAll(groundCol.bounds.center, groundCol.bounds.size, 0, collisionLayer);
+        foreach(Collider2D collision in collisions)
+        {
+            if (collision.CompareTag("Wall"))
+            {
+                flags |= ECollisionFlags.Wall;
+            }
+            else if (collision.CompareTag("Ground"))
+            {
+                flags |= ECollisionFlags.Ground;
+            }
+        }
+
+        return flags;
     }
 }

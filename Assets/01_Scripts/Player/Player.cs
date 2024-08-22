@@ -20,10 +20,18 @@ public class Player : MonoBehaviour
     private float currentPosX = 0;
     private int dir = 1   ; // 방향
 
+    private bool isReverse = true;
+    private bool isGround;
+    private bool isWall;
+
     private Rigidbody2D rigid;
     private GroundDetect checkGround;
 
+    private Transform visual;
+    private SpriteRenderer visualSr;
+
     private int currentJumpCnt = 0;
+
 
     // ======================================
 
@@ -36,18 +44,18 @@ public class Player : MonoBehaviour
     [SerializeField] private LayerMask wallLayer;
 
     private Collider2D playerCol;
-    private bool canMove = true;
 
     // ======================================
 
     private void Awake()
     {
+        visual = transform.Find("Visual");
+
         rigid = GetComponent<Rigidbody2D>();
         checkGround = GetComponentInChildren<GroundDetect>();
-
         playerCol = GetComponent<Collider2D>();
+        visualSr = visual.GetComponent<SpriteRenderer>();
 
-        canMove = true;
         currentPosX = transform.localPosition.x;
     }
 
@@ -58,10 +66,9 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (canMove)
-        {
-            Move();
-        }
+        //print(isWall);
+        Move();
+        CheckCurrentState();
 
         if (Input.GetKeyDown(KeyCode.W) && player == EPlayerMode.LEFT)
         {
@@ -69,37 +76,40 @@ public class Player : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow) && player == EPlayerMode.RIGHT)
         {
-            if (checkGround.IsGround())
-            {
-                currentJumpCnt = 0;
-            }
+            RightJump();
+        }
+    }
 
-            if (currentJumpCnt <= 0)
-            {
-                print("처음점프");
-                canMove = false;
-                RightJump();
-            }
-            else
-            {
-                print("두번");
-                if (IsWall())
-                {
-                    print("벽점프");
-                    RightJump();
-                }
-            }
+    public void CheckCurrentState()
+    {
+        ECollisionFlags collision = checkGround.GetCollisionState();
+        //print(collision);
+
+        if (collision.HasFlag(ECollisionFlags.Wall))
+        {
+            Reverse();
+            isWall = true;
+        }
+        else
+        {
+            isWall = false;
+        }
+
+        if (collision.HasFlag(ECollisionFlags.Ground))
+        {
+            isGround = true;
+
+            currentJumpCnt = 0;
+            canJump = true;
+        }
+        else
+        {
+            isGround = false;
         }
     }
 
     public void LeftJump()
     {
-        if (checkGround.IsGround())
-        {
-            currentJumpCnt = 0;
-            canJump = true;
-        }
-
         if (currentJumpCnt < 2 && canJump) // 더블 점프 지원
         {
             if (++currentJumpCnt >= 2)
@@ -107,21 +117,32 @@ public class Player : MonoBehaviour
                 canJump = false;
             }
 
-            rigid.velocity = Vector2.zero;
-            rigid.velocity = new Vector2(.5f * jumpPower, 1.2f * jumpPower);
+            Jump();
         }
     }
 
     public void RightJump()
     {
-        rigid.velocity = Vector2.zero;
-        rigid.velocity = new Vector2(-dir * jumpPower, 1.1f * jumpPower);
+        if (currentJumpCnt > 0)
+        {
+            if (isWall) // 벽ㅇㅔ 닿았을 때만
+            {
+                print("wall");
+                Jump();
+            }
+        }
+        else
+        {
+            Jump();
+        }
+
         ++currentJumpCnt;
     }
-
-    private bool IsWall()
+    
+    private void Jump()
     {
-        return Physics2D.BoxCast(transform.position, playerCol.bounds.size, 0f, Vector2.left * dir, 0.5f, wallLayer);
+        rigid.velocity = Vector2.zero;
+        rigid.velocity = new Vector2(.5f * jumpPower, 1.2f * jumpPower);
     }
 
     private void Move()
@@ -130,16 +151,20 @@ public class Player : MonoBehaviour
         transform.position = new Vector2(currentPosX, transform.position.y);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void Reverse()
     {
-        if (collision.CompareTag("Wall"))
-        {
-            Reverse();
-        }
+        if (!isReverse) return;
+
+        dir *= -1;
+        visualSr.flipX = dir < 0;
+
+        StartCoroutine(ReverseWaitCor());
     }
 
-    private void Reverse()
+    private IEnumerator ReverseWaitCor()
     {
-        dir *= -1;
+        isReverse = false;
+        yield return new WaitForSeconds(.1f);
+        isReverse = true;
     }
 }
