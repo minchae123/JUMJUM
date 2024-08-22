@@ -28,7 +28,7 @@ public class GroundDetect : MonoBehaviour
     {
         ECollisionFlags flags = ECollisionFlags.None;
 
-        Collider2D[] collisions = Physics2D.OverlapBoxAll(groundCol.bounds.center, groundCol.bounds.size, 0, collisionLayer);
+        Collider2D[] collisions = Physics2D.OverlapBoxAll(groundCol.bounds.center, groundCol.bounds.size * 1.1f, 0, collisionLayer);
         foreach(Collider2D collision in collisions)
         {
             if (collision.CompareTag("Wall"))

@@ -11,18 +11,18 @@ public enum EPlayerMode
 
 public class Player : MonoBehaviour
 {
-    [Header("공통변수")]
-    [SerializeField] private EPlayerMode player;
+    [SerializeField] private EPlayerMode player; // none XXX
 
-    [SerializeField] private float speed;
-    [SerializeField] private float jumpPower;
+    [SerializeField] private float speed; // 10
+    [SerializeField] private float jumpPower; // 15
 
     private float currentPosX = 0;
-    private int dir = 1   ; // 방향
+    private int dir = 1   ; // direction
 
-    private bool isReverse = true;
-    private bool isGround;
-    private bool isWall;
+    private bool canJump = true; // only left player
+    private bool isReverse = true; //
+    private bool isGround; // ground check
+    private bool isWall; // wall check
 
     private Rigidbody2D rigid;
     private GroundDetect checkGround;
@@ -32,19 +32,6 @@ public class Player : MonoBehaviour
 
     private int currentJumpCnt = 0;
 
-
-    // ======================================
-
-    [Header("왼쪽 플레이어")]
-    private bool canJump = true;
-
-    // ======================================
-
-    [Header("오른쪽 플레이어")]
-    [SerializeField] private LayerMask wallLayer;
-
-    private Collider2D playerCol;
-
     // ======================================
 
     private void Awake()
@@ -53,22 +40,27 @@ public class Player : MonoBehaviour
 
         rigid = GetComponent<Rigidbody2D>();
         checkGround = GetComponentInChildren<GroundDetect>();
-        playerCol = GetComponent<Collider2D>();
         visualSr = visual.GetComponent<SpriteRenderer>();
 
-        currentPosX = transform.localPosition.x;
+        if(player == EPlayerMode.NONE)
+        {
+            Debug.LogWarning("PlayerMode Set NONE");
+        }
     }
 
     private void Start()
     {
+        currentPosX = transform.localPosition.x;
+    }
 
+    private void FixedUpdate()
+    {
+        CheckCurrentState();
     }
 
     private void Update()
     {
-        //print(isWall);
         Move();
-        CheckCurrentState();
 
         if (Input.GetKeyDown(KeyCode.W) && player == EPlayerMode.LEFT)
         {
@@ -80,11 +72,15 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void CheckCurrentState()
+    private IEnumerator WallWaitCor()
+    {
+        yield return new WaitForSeconds(.1f);
+        isWall = false;
+    }
+
+    private void CheckCurrentState()
     {
         ECollisionFlags collision = checkGround.GetCollisionState();
-        //print(collision);
-
         if (collision.HasFlag(ECollisionFlags.Wall))
         {
             Reverse();
@@ -92,25 +88,31 @@ public class Player : MonoBehaviour
         }
         else
         {
-            isWall = false;
+            if (isWall)
+            {
+                StartCoroutine(WallWaitCor());
+            }
         }
 
         if (collision.HasFlag(ECollisionFlags.Ground))
         {
             isGround = true;
-
-            currentJumpCnt = 0;
-            canJump = true;
         }
         else
         {
-            isGround = false;
+            if(isGround) isGround = false;
         }
     }
 
     public void LeftJump()
     {
-        if (currentJumpCnt < 2 && canJump) // 더블 점프 지원
+        if(isGround)
+        {
+            currentJumpCnt = 0;
+            canJump = true;
+        }
+
+        if (currentJumpCnt < 2 && canJump) // 더블 점프
         {
             if (++currentJumpCnt >= 2)
             {
@@ -123,20 +125,16 @@ public class Player : MonoBehaviour
 
     public void RightJump()
     {
-        if (currentJumpCnt > 0)
+        if (isGround)
         {
-            if (isWall) // 벽ㅇㅔ 닿았을 때만
-            {
-                print("wall");
-                Jump();
-            }
-        }
-        else
-        {
-            Jump();
+            currentJumpCnt = 0;
         }
 
         ++currentJumpCnt;
+        if ((currentJumpCnt > 1 && isWall) || currentJumpCnt <= 1)
+        {
+            Jump();
+        }
     }
     
     private void Jump()
@@ -151,7 +149,7 @@ public class Player : MonoBehaviour
         transform.position = new Vector2(currentPosX, transform.position.y);
     }
 
-    public void Reverse()
+    private void Reverse()
     {
         if (!isReverse) return;
 
