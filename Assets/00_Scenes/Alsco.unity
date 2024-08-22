@@ -294,7 +294,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8a27776abade1a44986a645982847b81, type: 3}
+  m_Sprite: {fileID: 1006610023, guid: 9f7822d6c99772747858a1959f31e3cd, type: 3}
   m_Color: {r: 1, g: 0.956455, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -492,7 +492,7 @@ GameObject:
   - component: {fileID: 1307099322}
   - component: {fileID: 1307099321}
   m_Layer: 0
-  m_Name: Particle System
+  m_Name: Bubble
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -827,7 +827,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 3
       scalar: 0.7
-      minScalar: 0.1
+      minScalar: 0.05
       maxCurve:
         serializedVersion: 2
         m_Curve:

@@ -4,11 +4,20 @@ using UnityEngine;
 
 public class Door : MonoBehaviour
 {
-	private void OnTriggerEnter2D(Collider2D collision)
+	private BoxCollider2D doorCollider;
+
+	private void Awake()
 	{
-		if(collision.CompareTag("Player"))
-		{
-			print("Game Clear!");
-		}
+		doorCollider = GetComponent<BoxCollider2D>();
+	}
+
+	public void Open()
+	{
+		doorCollider.enabled = true;
+	}
+
+	public void Close()
+	{
+		doorCollider.enabled = false;
 	}
 }
