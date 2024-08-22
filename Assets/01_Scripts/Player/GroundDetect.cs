@@ -1,18 +1,46 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
+[System.Flags]
+public enum ECollisionFlags
+{
+    None = 0,
+    Ground = 1,
+    Wall = 1 << 1
+}
 
 public class GroundDetect : MonoBehaviour
 {
-    private bool isGround = false;
-    public bool IsGround => isGround;
+    private Player player;
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    [SerializeField] private LayerMask collisionLayer;
+    private Collider2D groundCol;
+
+    private void Awake()
     {
-        isGround = true;
+        groundCol = GetComponent<Collider2D>();
+        player = GetComponentInParent<Player>();
     }
-    private void OnCollisionExit2D(Collision2D collision)
+
+    public ECollisionFlags GetCollisionState()
     {
-        isGround = false;
+        ECollisionFlags flags = ECollisionFlags.None;
+
+        Collider2D[] collisions = Physics2D.OverlapBoxAll(groundCol.bounds.center, groundCol.bounds.size * 1.1f, 0, collisionLayer);
+        foreach(Collider2D collision in collisions)
+        {
+            if (collision.CompareTag("Wall"))
+            {
+                flags |= ECollisionFlags.Wall;
+            }
+            else if (collision.CompareTag("Ground"))
+            {
+                flags |= ECollisionFlags.Ground;
+            }
+        }
+
+        return flags;
     }
 }
