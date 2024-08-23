@@ -145,8 +145,7 @@ public class Player : MonoBehaviour
 
     private void Move()
     {
-        currentPosX += Time.deltaTime * dir * speed;
-        transform.position = new Vector2(currentPosX, transform.position.y);
+        rigid.velocity = new Vector2(dir * speed, rigid.velocity.y);
     }
 
     private void Reverse()
