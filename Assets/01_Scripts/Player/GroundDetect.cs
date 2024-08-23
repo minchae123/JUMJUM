@@ -6,39 +6,36 @@ using UnityEngine.Events;
 [System.Flags]
 public enum ECollisionFlags
 {
-	None = 0,
-	Ground = 1,
-	Wall = 1 << 1
+    None = 0,
+    Ground = 1,
+    Wall = 1 << 1
 }
 
 public class GroundDetect : MonoBehaviour
 {
-	private Player player;
+    private Player player;
 
-	//[SerializeField] private LayerMask collisionLayer;
+    [SerializeField] private LayerMask collisionLayer;
+    private Collider2D col;
 
-	[SerializeField] private LayerMask groundLayer;
-	[SerializeField] private LayerMask wallLayer;
-	private Collider2D col;
+    private void Awake()
+    {
+        col = GetComponent<Collider2D>();
+        player = GetComponentInParent<Player>();
+    }
 
-	private void Awake()
-	{
-		col = GetComponent<Collider2D>();
-		player = GetComponentInParent<Player>();
-	}
+    public ECollisionFlags GetCollisionState(int dir)
+    {
+        ECollisionFlags flags = ECollisionFlags.None;
 
-	public ECollisionFlags GetCollisionState(int dir)
-	{
-		ECollisionFlags flags = ECollisionFlags.None;
+        RaycastHit2D hitGround = Physics2D.BoxCast(col.bounds.center, col.bounds.size, 0f, Vector2.down, 0.5f, collisionLayer);
+        RaycastHit2D hitWall = Physics2D.BoxCast(col.bounds.center + Vector3.up * 0.1f, col.bounds.size, 0f, Vector2.right * dir, 0.5f, collisionLayer);
 
-		RaycastHit2D hitGround = Physics2D.BoxCast(col.bounds.center, col.bounds.size, 0f, Vector2.down, 0.5f, groundLayer);
-		RaycastHit2D hitWall = Physics2D.BoxCast(col.bounds.center, col.bounds.size, 0f, Vector2.right * dir, 0.5f, wallLayer);
+        if (hitGround.collider != null) flags |= ECollisionFlags.Ground;
+        if(hitWall.collider !=null) flags |= ECollisionFlags.Wall;
 
-		if (hitGround.collider != null) flags |= ECollisionFlags.Ground;
-		if (hitWall.collider != null) flags |= ECollisionFlags.Wall;
-
-		//Collider2D[] collisions = Physics2D.OverlapBoxAll(col.bounds.center, col.bounds.size * 1.1f, 0, collisionLayer);
-		/*foreach (Collider2D collision in collisions)
+        //Collider2D[] collisions = Physics2D.OverlapBoxAll(col.bounds.center, col.bounds.size * 1.1f, 0, collisionLayer);
+        /*foreach (Collider2D collision in collisions)
         {
             if (collision.CompareTag("Wall"))
             {
@@ -50,8 +47,8 @@ public class GroundDetect : MonoBehaviour
             }
         }*/
 
-		print(flags);
+        print(flags);
 
-		return flags;
-	}
+        return flags;
+    }
 }
