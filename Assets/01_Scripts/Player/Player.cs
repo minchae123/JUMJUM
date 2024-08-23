@@ -80,7 +80,7 @@ public class Player : MonoBehaviour
 
     private void CheckCurrentState()
     {
-        ECollisionFlags collision = checkGround.GetCollisionState();
+        ECollisionFlags collision = checkGround.GetCollisionState(dir);
         if (collision.HasFlag(ECollisionFlags.Wall))
         {
             Reverse();
