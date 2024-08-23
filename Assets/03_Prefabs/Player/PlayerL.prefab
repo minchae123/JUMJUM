@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 378712884395263133}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.64, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -73,7 +73,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 1006610023, guid: 9f7822d6c99772747858a1959f31e3cd, type: 3}
   m_Color: {r: 1, g: 0.042295847, b: 0, a: 1}
   m_FlipX: 0
@@ -247,7 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa3f478b782d06343b44f395cd9ce330, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: 2
+  player: 1
   speed: 10
   jumpPower: 15
 --- !u!50 &5418392146343684480

@@ -62,13 +62,13 @@ public class Player : MonoBehaviour
     {
         Move();
 
-        if (Input.GetKeyDown(KeyCode.W) && player == EPlayerMode.LEFT)
-        {
-            LeftJump();
-        }
-        else if (Input.GetKeyDown(KeyCode.UpArrow) && player == EPlayerMode.RIGHT)
+        if (Input.GetKeyDown(KeyCode.W) && player == EPlayerMode.RIGHT)
         {
             RightJump();
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow) && player == EPlayerMode.LEFT)
+        {
+            LeftJump();
         }
     }
 
@@ -104,7 +104,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void LeftJump()
+    public void RightJump()
     {
         if(isGround)
         {
@@ -123,7 +123,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void RightJump()
+    public void LeftJump()
     {
         if (isGround)
         {
