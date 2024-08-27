@@ -16,7 +16,6 @@ public class Player : MonoBehaviour
     [SerializeField] private float speed; // 10
     [SerializeField] private float jumpPower; // 15
 
-    private float currentPosX = 0;
     private int dir = 1   ; // direction
 
     private bool canJump = true; // only left player
@@ -46,11 +45,6 @@ public class Player : MonoBehaviour
         {
             Debug.LogWarning("PlayerMode Set NONE");
         }
-    }
-
-    private void Start()
-    {
-        currentPosX = transform.localPosition.x;
     }
 
     private void FixedUpdate()
