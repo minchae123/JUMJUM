@@ -47,7 +47,7 @@ public class GroundDetect : MonoBehaviour
             }
         }*/
 
-        print(flags);
+        //print(flags);
 
         return flags;
     }
