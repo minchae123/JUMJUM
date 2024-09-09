@@ -8,7 +8,7 @@ public class Button : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-			
+		connectDoor.Open();
 	}
 
 	private void OnTriggerStay2D(Collider2D collision)

@@ -13,11 +13,11 @@ public class Door : MonoBehaviour
 
 	public void Open()
 	{
-		doorCollider.enabled = true;
+		doorCollider.enabled = false;
 	}
 
 	public void Close()
 	{
-		doorCollider.enabled = false;
+		doorCollider.enabled = true;
 	}
 }

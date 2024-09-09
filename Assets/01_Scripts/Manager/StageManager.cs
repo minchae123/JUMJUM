@@ -23,6 +23,19 @@ public class StageManager : MonoBehaviour
 		LoadStage(GameManager.Instance.CurStage);
 	}
 
+	private void Update()
+	{
+		if(Input.GetKeyDown(KeyCode.R))
+		{
+			LoadStage(GameManager.Instance.CurStage);
+		}
+
+		if(Input.GetKeyDown(KeyCode.Q))
+		{
+			ClearStage();
+		}
+	}
+
 	public void LoadStage(int num)
 	{
 		if (curStageObject == null)
